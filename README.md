@@ -21,29 +21,6 @@ build:
     context: ./server
     dockerfile: Dockerfile
 container_name: api_container
-ports:
-    - "5000:5000"
-```
-
-### Client Container
-```yaml
-image: wrlakshan/client:latest
-build:
-    context: ./client
-    dockerfile: Dockerfile
-container_name: react_container
-ports:
-    - "3000:3000"
-```
-
-### MongoDB Container
-```yaml
-image: mongo:latest
-container_name: mongodb_container
-volumes:
-    - mongo_data:/data/db
-ports:
-    - "27017:27017"
 ```
 
 ## Environment Variables
@@ -67,69 +44,51 @@ environment:
 ### Sample dev.env File
 ```
 DB_PASSWORD=12345
-MONGO_URI=mongodb://mongodb_container:27017/myapp
-JWT_SECRET=mysecrettoken
-NODE_ENV=development
 ```
 
 ## Docker Secrets
 Docker secrets provide a secure way to store sensitive data. These are encrypted at rest and only accessible to services that need them.
 
-```yaml
-secrets:
-  db_password:
-    file: ./secrets/db_password.txt
-
-services:
-  api:
-    secrets:
-      - db_password
-```
-
 ## Docker Configuration
 Docker configurations allow you to store non-sensitive configuration data and deploy it to containers.
 
-```yaml
-configs:
-  api_config:
-    file: ./configs/api_config.json
-    
-services:
-  api:
-    configs:
-      - source: api_config
-        target: /app/config.json
-```
-
 ## Docker Volumes
 Volumes provide persistent storage for containers, allowing data to persist between container restarts.
-
-```yaml
-volumes:
-  mongo_data:
-    driver: local
-  node_modules:
-    driver: local
-```
 
 ## Common Commands
 
 Build and start with default configuration:
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
 
 Build and start with specific configuration file:
 ```bash
-docker compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.dev.yml up --build
 ```
 
-Stop all containers:
+Check container health status:
 ```bash
-docker compose down
+docker inspect api_container | grep -A 10 Health
 ```
 
-View container logs:
-```bash
-docker compose logs -f [service_name]
+## Container Health Checks
+Docker health checks monitor the status of your containers. They help detect if a service is running correctly and can trigger automatic restarts when issues occur.
+
+The command `docker inspect api_container | grep -A 10 Health` displays the health check configuration and current status of the api_container. The `-A 10` flag shows 10 lines of context after any matching Health entries.
+
+Example output:
+```json
+"Health": {
+    "Status": "healthy",
+    "FailingStreak": 0,
+    "Log": [
+        {
+            "Start": "2023-08-15T12:00:01.123456789Z",
+            "End": "2023-08-15T12:00:02.123456789Z",
+            "ExitCode": 0,
+            "Output": "HTTP/1.1 200 OK\r\n"
+        }
+    ]
+}
 ```

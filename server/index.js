@@ -29,8 +29,18 @@ mongoose
   });
 
 // helthcheck route
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
+  console.log("Health check");
   res.status(200).json({ message: "Server is running" });
+});
+
+// crash route
+app.get("/crash", (req, res) => {
+  console.log("Crashing the server");
+  // Simulate a crash
+  setTimeout(() => {
+    throw new Error("Server crashed!");
+  }, 1000);
 });
 
 // API routes for get user data
