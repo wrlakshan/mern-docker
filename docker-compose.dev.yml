@@ -1,0 +1,38 @@
+# This file is used to define the services that will be used in the application.
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo_container
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  server:
+    image: wrlakshan/server:latest
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    container_name: api_container
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/userDB
+
+  # client:
+  #   build: ./client
+  #   container_name: client_container
+  #   ports:
+  #     - "3002:3000"
+  #   depends_on:
+  #     - server
+  #   stdin_open: true
+  #   tty: true
+  #   volumes:
+  #     - ./client:/app
+  #     - /client/node_modules
+
+volumes:
+  mongo_data:
