@@ -1,5 +1,5 @@
 # Dockerfile for the client
-FROM node:20.14.0
+FROM node:24-alpine
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY . .
 
 RUN npm install 
 
-EXPOSE 5173
+EXPOSE 8080
 
 CMD ["npm","run" ,"dev"]
 
