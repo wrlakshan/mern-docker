@@ -35,3 +35,13 @@ jobs:
         tags: wrlakshan/server:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        
+    - name: Build and push client image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./client
+        file: ./client/Dockerfile.dev
+        push: true
+        tags: wrlakshan/client:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
