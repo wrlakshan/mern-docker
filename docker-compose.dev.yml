@@ -64,24 +64,21 @@ services:
     volumes:
       - app_logs:/app/logs
 
-  # You could uncomment and configure the client for production
-  # client:
-  #   build: 
-  #     context: ./client
-  #     dockerfile: Dockerfile.prod  # Use a production-specific Dockerfile
-  #   container_name: client_container
-  #   restart: always
-  #   networks:
-  #     - mern_network
-  #   ports:
-  #     - "3002:3000"
-  #   depends_on:
-  #     - server
-  #   stdin_open: true
-  #   tty: true
-  #   volumes:
-  #     - ./client:/app
-  #     - /client/node_modules
+  client:
+    image: wrlakshan/client:latest
+    build: 
+      context: ./client
+      dockerfile: Dockerfile.dev  # Use a production-specific Dockerfile
+    container_name: client_container
+    restart: always
+    networks:
+      - mern_network
+    ports:
+      - "3002:3000"
+    depends_on:
+      - server
+    stdin_open: true
+    tty: true
 
 volumes:
   mongo_data:

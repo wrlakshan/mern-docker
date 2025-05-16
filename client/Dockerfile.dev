@@ -1,0 +1,32 @@
+# Build stage
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files and install dependencies first for better caching
+COPY package.json .
+COPY package-lock.json* .
+
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the React Vite application
+RUN npm run build
+
+# Production stage
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Install serve to run the application
+RUN npm install -g serve
+
+# Copy built files from build stage
+COPY --from=builder /app/dist /app/dist
+
+EXPOSE 3000
+
+# Serve the static files
+CMD ["serve", "-s", "dist", "-l", "3000"]
